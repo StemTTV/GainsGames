@@ -17,5 +17,18 @@
     "height": "600",
     "scrolling": "no",
     "frameborder": "0"
+  },
+  {
+    "id": "basketball-legends",
+    "title": "Basketball Legends",
+    "thumbnail": "https://tse2.mm.bing.net/th/id/OIP.rrvUJngmDVeT1NSXW30uTwHaEo?w=272&h=180&c=7&r=0&o=7&pid=1.7&rm=3",
+    "url": "https://ubg67.gitlab.io/basketball-legends/",
+    "className": "game-iframe",
+    "iframeId": "gameFrame",
+    "style": "background:black;",
+    "width": "100%",
+    "height": "600",
+    "scrolling": "no",
+    "frameborder": "0"
   }
 ]
