@@ -173,7 +173,7 @@
                 <button id="close-modal-btn" class="btn-close">&times;</button>
             </div>
         </div>
-        <iframe id="game-iframe" src="" allow="accelerometer; gyroscope; autoplay; payment; fullscreen; microphone; clipboard-read; clipboard-write" sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-presentation allow-scripts allow-same-origin allow-downloads allow-popups-to-escape-sandbox"></iframe>
+        <iframe id="game-iframe" src="" allow="accelerometer; gyroscope; autoplay; payment; fullscreen; microphone; clipboard-read; clipboard-write" sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-presentation allow-scripts allow-same-origin allow-downloads allow-popups-to-escape-sandbox" referrerpolicy="no-referrer-when-downgrade"></iframe>
     </div>
 
     <!-- Footer -->
@@ -241,6 +241,89 @@
         function openGame(game) {
             modalTitle.textContent = game.title.toUpperCase();
             gameIframe.src = game.url;
+            
+            // Apply custom styles if they exist, preserving flex: 1 for layout
+            gameIframe.style.cssText = 'flex: 1; border: none; ' + (game.style || '');
+            
+            // Handle scrolling attribute
+            if (game.scrolling) {
+                gameIframe.setAttribute('scrolling', game.scrolling);
+            } else {
+                gameIframe.removeAttribute('scrolling');
+            }
+            
+            // Handle frameborder attribute
+            if (game.frameborder !== undefined) {
+                gameIframe.setAttribute('frameborder', game.frameborder);
+            } else {
+                gameIframe.setAttribute('frameborder', '0');
+            }
+            
+            // Handle allowfullscreen attribute
+            if (game.allowfullscreen !== undefined) {
+                if (game.allowfullscreen === "true" || game.allowfullscreen === true) {
+                    gameIframe.setAttribute('allowfullscreen', '');
+                } else {
+                    gameIframe.removeAttribute('allowfullscreen');
+                }
+            } else {
+                gameIframe.setAttribute('allowfullscreen', '');
+            }
+            
+            // Handle width and height attributes
+            if (game.width) {
+                gameIframe.setAttribute('width', game.width);
+            } else {
+                gameIframe.removeAttribute('width');
+            }
+            if (game.height) {
+                gameIframe.setAttribute('height', game.height);
+            } else {
+                gameIframe.removeAttribute('height');
+            }
+            
+            // Handle class attribute
+            if (game.className) {
+                gameIframe.className = game.className;
+            } else {
+                gameIframe.className = '';
+            }
+            
+            // Handle id attribute
+            if (game.iframeId) {
+                gameIframe.id = game.iframeId;
+            } else {
+                gameIframe.id = 'game-iframe';
+            }
+            
+            // Handle sandbox attribute
+            if (game.sandbox) {
+                gameIframe.setAttribute('sandbox', game.sandbox);
+            } else {
+                gameIframe.setAttribute('sandbox', 'allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-presentation allow-scripts allow-same-origin allow-downloads allow-popups-to-escape-sandbox');
+            }
+            
+            // Handle allow attribute
+            if (game.allow) {
+                gameIframe.setAttribute('allow', game.allow);
+            } else {
+                gameIframe.setAttribute('allow', 'accelerometer; gyroscope; autoplay; payment; fullscreen; microphone; clipboard-read; clipboard-write');
+            }
+            
+            // Handle loading attribute
+            if (game.loading) {
+                gameIframe.setAttribute('loading', game.loading);
+            } else {
+                gameIframe.removeAttribute('loading');
+            }
+            
+            // Handle referrerpolicy attribute
+            if (game.referrerpolicy) {
+                gameIframe.setAttribute('referrerpolicy', game.referrerpolicy);
+            } else {
+                gameIframe.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+            }
+            
             gameModal.style.display = 'flex';
             document.body.style.overflow = 'hidden';
         }
@@ -248,6 +331,18 @@
         function closeGame() {
             gameModal.style.display = 'none';
             gameIframe.src = '';
+            gameIframe.id = 'game-iframe';
+            gameIframe.className = '';
+            gameIframe.style.cssText = '';
+            gameIframe.removeAttribute('width');
+            gameIframe.removeAttribute('height');
+            gameIframe.removeAttribute('scrolling');
+            gameIframe.removeAttribute('loading');
+            gameIframe.setAttribute('frameborder', '0');
+            gameIframe.setAttribute('allowfullscreen', '');
+            gameIframe.setAttribute('referrerpolicy', 'no-referrer-when-downgrade');
+            gameIframe.setAttribute('sandbox', 'allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-presentation allow-scripts allow-same-origin allow-downloads allow-popups-to-escape-sandbox');
+            gameIframe.setAttribute('allow', 'accelerometer; gyroscope; autoplay; payment; fullscreen; microphone; clipboard-read; clipboard-write');
             document.body.style.overflow = 'auto';
         }
 

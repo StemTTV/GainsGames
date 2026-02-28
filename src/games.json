@@ -4,5 +4,18 @@
     "title": "Rocket Goal",
     "thumbnail": "https://tse2.mm.bing.net/th/id/OIP.VtZ8uz3AkHv_VGPFMObebAHaEK?w=287&h=180&c=7&r=0&o=7&pid=1.7&rm=3",
     "url": "https://rocketgoal.io/?sdk=crazy&isNewUser=true&skipPrerollFirstSession=true"
+  },
+  {
+    "id": "bitlife",
+    "title": "BitLife Life Simulator",
+    "thumbnail": "https://tse2.mm.bing.net/th/id/OIP.ZYeM4fSRb9sBqKZri1x8DAAAAA?w=162&h=180&c=7&r=0&o=7&pid=1.7&rm=3",
+    "url": "https://ubg67.gitlab.io/bitlife-life-simulator/",
+    "className": "game-iframe",
+    "iframeId": "gameFrame",
+    "style": "background:black;",
+    "width": "100%",
+    "height": "600",
+    "scrolling": "no",
+    "frameborder": "0"
   }
 ]
