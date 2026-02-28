@@ -1,13 +1,311 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Unblocked Hub - Play Games Anywhere</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
-</html>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0a;
+            color: #f4f4f5;
+        }
 
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 10px;
+            border: 2px solid #0a0a0a;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3f3f46;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .game-card:hover .play-overlay {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="selection:bg-emerald-500/30">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-40 border-b border-white/5 bg-[#0a0a0a]/80 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
+                    <i data-lucide="gamepad-2" class="w-5 h-5 text-black"></i>
+                </div>
+                <h1 class="text-xl font-bold tracking-tight bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
+                    Unblocked Hub
+                </h1>
+            </div>
+
+            <div class="relative flex-1 max-w-md mx-4">
+                <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500"></i>
+                <input
+                    type="text"
+                    id="search-input"
+                    placeholder="Search games..."
+                    class="w-full bg-zinc-900/50 border border-white/10 rounded-full py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all"
+                >
+            </div>
+
+            <div class="hidden sm:flex items-center gap-4 text-sm font-medium text-zinc-400">
+                <a href="#" class="hover:text-white transition-colors">Home</a>
+                <a href="#" class="hover:text-white transition-colors">Categories</a>
+                <a href="#" class="hover:text-white transition-colors">About</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="flex flex-col gap-8">
+            <!-- Hero Section -->
+            <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-500/10 to-transparent border border-white/5 p-8 sm:p-12">
+                <div class="relative z-10 max-w-2xl">
+                    <h2 class="text-4xl sm:text-5xl font-bold mb-4 tracking-tight">
+                        Play Anywhere, <br />
+                        <span class="text-emerald-500">No Restrictions.</span>
+                    </h2>
+                    <p class="text-zinc-400 text-lg mb-8">
+                        Access your favorite web games instantly. Fast, free, and completely unblocked for school or work.
+                    </p>
+                    <button 
+                        id="play-random-btn"
+                        class="bg-emerald-500 hover:bg-emerald-400 text-black font-semibold px-6 py-3 rounded-xl transition-all active:scale-95 flex items-center gap-2"
+                    >
+                        Play Random Game
+                    </button>
+                </div>
+                <div class="absolute top-0 right-0 w-1/2 h-full opacity-20 pointer-events-none">
+                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-emerald-500/40 via-transparent to-transparent blur-3xl"></div>
+                </div>
+            </section>
+
+            <!-- Games Grid -->
+            <section>
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-semibold">Popular Games</h3>
+                    <span id="game-count" class="text-xs text-zinc-500 uppercase tracking-widest">Loading Games...</span>
+                </div>
+                
+                <div id="games-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- Games will be injected here -->
+                </div>
+
+                <div id="no-results" class="hidden text-center py-20">
+                    <p class="text-zinc-500">No games found matching your search.</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Game Modal -->
+    <div id="game-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 sm:p-8 bg-black/95 backdrop-blur-sm">
+        <div class="relative w-full max-w-6xl h-full flex flex-col bg-zinc-900 rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-4 border-b border-white/5">
+                <div class="flex items-center gap-3">
+                    <h3 id="modal-title" class="text-lg font-semibold">Game Title</h3>
+                    <span class="text-xs px-2 py-1 bg-emerald-500/10 text-emerald-500 rounded-md border border-emerald-500/20">
+                        Live
+                    </span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="fullscreen-btn" class="p-2 hover:bg-white/5 rounded-lg text-zinc-400 hover:text-white transition-colors" title="Fullscreen">
+                        <i data-lucide="maximize-2" class="w-5 h-5"></i>
+                    </button>
+                    <a id="external-link" href="#" target="_blank" rel="noopener noreferrer" class="p-2 hover:bg-white/5 rounded-lg text-zinc-400 hover:text-white transition-colors" title="Open in new tab">
+                        <i data-lucide="external-link" class="w-5 h-5"></i>
+                    </a>
+                    <button id="close-modal-btn" class="p-2 hover:bg-white/5 rounded-lg text-zinc-400 hover:text-white transition-colors">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Game Viewport -->
+            <div class="flex-1 bg-black relative">
+                <iframe id="game-iframe" src="" class="w-full h-full border-0" allow="fullscreen; autoplay; encrypted-media; picture-in-picture"></iframe>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 bg-zinc-900/50 flex items-center justify-between text-xs text-zinc-500">
+                <div class="flex items-center gap-4">
+                    <span>Powered by Unblocked Hub</span>
+                    <span>•</span>
+                    <span>Safe & Secure</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span>Report Issue</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 py-12 mt-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-8">
+            <div class="flex items-center gap-2">
+                <div class="w-6 h-6 bg-zinc-800 rounded flex items-center justify-center">
+                    <i data-lucide="gamepad-2" class="w-4 h-4 text-zinc-400"></i>
+                </div>
+                <span class="text-sm font-semibold text-zinc-400">Unblocked Hub</span>
+            </div>
+            <p class="text-zinc-500 text-sm">
+                © <span id="year"></span> Unblocked Hub. All games are property of their respective owners.
+            </p>
+            <div class="flex items-center gap-6 text-sm text-zinc-500">
+                <a href="#" class="hover:text-white transition-colors">Privacy</a>
+                <a href="#" class="hover:text-white transition-colors">Terms</a>
+                <a href="#" class="hover:text-white transition-colors">Contact</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // State
+        let games = [];
+        let filteredGames = [];
+
+        // DOM Elements
+        const gamesGrid = document.getElementById('games-grid');
+        const searchInput = document.getElementById('search-input');
+        const gameCount = document.getElementById('game-count');
+        const noResults = document.getElementById('no-results');
+        const gameModal = document.getElementById('game-modal');
+        const gameIframe = document.getElementById('game-iframe');
+        const modalTitle = document.getElementById('modal-title');
+        const externalLink = document.getElementById('external-link');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        const playRandomBtn = document.getElementById('play-random-btn');
+        const yearSpan = document.getElementById('year');
+
+        // Initialize
+        async function init() {
+            yearSpan.textContent = new Date().getFullYear();
+            try {
+                const response = await fetch('./src/games.json');
+                games = await response.json();
+                filteredGames = [...games];
+                renderGames();
+                lucide.createIcons();
+            } catch (error) {
+                console.error('Error loading games:', error);
+                gameCount.textContent = 'Error loading games';
+            }
+        }
+
+        function renderGames() {
+            gamesGrid.innerHTML = '';
+            gameCount.textContent = `${filteredGames.length} Games Found`;
+
+            if (filteredGames.length === 0) {
+                noResults.classList.remove('hidden');
+            } else {
+                noResults.classList.add('hidden');
+                filteredGames.forEach(game => {
+                    const card = document.createElement('div');
+                    card.className = 'game-card group relative bg-zinc-900/50 border border-white/5 rounded-2xl overflow-hidden cursor-pointer transition-all hover:-translate-y-1';
+                    card.innerHTML = `
+                        <div class="aspect-video overflow-hidden relative">
+                            <img src="${game.thumbnail}" alt="${game.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" referrerpolicy="no-referrer">
+                            <div class="play-overlay absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 transition-opacity duration-300">
+                                <div class="w-12 h-12 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg">
+                                    <i data-lucide="play" class="w-6 h-6 text-black fill-current"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-medium text-zinc-100">${game.title}</h4>
+                                <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <i data-lucide="maximize-2" class="w-4 h-4 text-zinc-400"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="absolute inset-0 bg-emerald-500/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                    `;
+                    card.onclick = () => openGame(game);
+                    gamesGrid.appendChild(card);
+                });
+                lucide.createIcons();
+            }
+        }
+
+        function openGame(game) {
+            modalTitle.textContent = game.title;
+            gameIframe.src = game.url;
+            externalLink.href = game.url;
+            gameModal.classList.remove('hidden');
+            gameModal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeGame() {
+            gameModal.classList.add('hidden');
+            gameModal.classList.remove('flex');
+            gameIframe.src = '';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Event Listeners
+        searchInput.oninput = (e) => {
+            const query = e.target.value.toLowerCase();
+            filteredGames = games.filter(game => game.title.toLowerCase().includes(query));
+            renderGames();
+        };
+
+        closeModalBtn.onclick = closeGame;
+
+        fullscreenBtn.onclick = () => {
+            if (gameIframe.requestFullscreen) {
+                gameIframe.requestFullscreen();
+            } else if (gameIframe.webkitRequestFullscreen) {
+                gameIframe.webkitRequestFullscreen();
+            } else if (gameIframe.msRequestFullscreen) {
+                gameIframe.msRequestFullscreen();
+            }
+        };
+
+        playRandomBtn.onclick = () => {
+            if (games.length > 0) {
+                const randomGame = games[Math.floor(Math.random() * games.length)];
+                openGame(randomGame);
+            }
+        };
+
+        // Close modal on escape key
+        document.onkeydown = (e) => {
+            if (e.key === 'Escape') closeGame();
+        };
+
+        // Close modal on outside click
+        gameModal.onclick = (e) => {
+            if (e.target === gameModal) closeGame();
+        };
+
+        init();
+    </script>
+</body>
+</html>
